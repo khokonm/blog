@@ -36,5 +36,5 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./out/
-          server-dir: /weekup/
+          server-dir: /
           dangerous-clean-slate: true
