@@ -4,6 +4,14 @@
 
 WeekUp is a collaborative learning journal where developers share their weekly insights, discoveries, and growth in technology and software development. Built with Next.js and Tailwind CSS, this platform encourages continuous learning and knowledge sharing within the developer community.
 
+## Template Attribution
+
+This project is forked from [Tailwind Nextjs Starter Blog](https://github.com/timlrx/tailwind-nextjs-starter-blog) created by Timothy Lin. The template has been modified to match our specific use case while maintaining the core functionality and design principles of the original project.
+
+## Logo Attribution
+
+Logo source: [Notepad Note SVG Vector](https://www.svgrepo.com/svg/193785/notepad-note)
+
 ## Contributing Your Learning Journey
 
 We welcome contributions from all developers who want to share their learning experiences! Here's how you can contribute:
