@@ -1,0 +1,184 @@
+---
+title: 'Setting Up a Fresh Ubuntu Server for PHP Development'
+date: '2025-03-03'
+week: 03
+tags: ['Ubuntu', 'Apache', 'PHP', 'MariaDB', 'phpMyAdmin', 'Server Setup', 'LAMP Stack', 'Web Development']
+draft: false
+summary: 'A step-by-step guide to setting up a fresh Ubuntu server with Apache, PHP, MariaDB, and phpMyAdmin, making it fully ready for PHP development.'
+---
+
+This guide will help you set up a fresh Ubuntu server with Apache, PHP, MariaDB, and phpMyAdmin, making it fully ready for PHP development and deployment.
+
+---
+
+## Step 1 — Installing Apache and Updating the Firewall
+
+Update the package list and install Apache:
+
+```bash
+sudo apt update  
+sudo apt install apache2  
+```
+
+Configure the firewall to allow web traffic:
+
+```bash
+sudo ufw app list  
+sudo ufw app info "WWW Full"  
+sudo ufw allow in "WWW Full"  
+```
+
+Now, accessing localhost should display the Apache default page.
+
+### Install CURL (Recommended)  
+CURL is useful for various future tasks:
+
+```bash
+sudo apt install curl
+```
+
+---
+
+## Step 2 — Installing MariaDB
+
+Install MariaDB server:
+
+```bash
+sudo apt install mariadb-server  
+```
+
+Secure the installation:
+
+```bash
+sudo mysql_secure_installation  
+```
+
+Create a new MariaDB user:
+
+```bash
+sudo mariadb  
+GRANT ALL ON *.* TO 'username'@'localhost' IDENTIFIED BY 'YOUR_PASSWORD' WITH GRANT OPTION;  
+FLUSH PRIVILEGES;  
+exit  
+```
+---
+
+## Step 3 — Installing PHP
+
+Install PHP and required modules:
+
+```bash
+sudo apt install php libapache2-mod-php php-mysql  
+```
+
+Edit Apache settings to prioritize PHP files:
+
+```bash
+sudo nano /etc/apache2/mods-enabled/dir.conf  
+```
+
+Modify the DirectoryIndex line:
+
+```conf
+DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm  
+```
+
+Restart Apache:
+```bash
+sudo systemctl restart apache2  
+```
+
+---
+
+## Step 4 — Installing phpMyAdmin
+
+Install phpMyAdmin and necessary PHP modules:
+
+```bash
+sudo apt install phpmyadmin php-mbstring php-zip php-gd php-json php-curl  
+```
+
+During installation:  
+- Select apache2 when prompted. **(Press SPACE to select, then TAB, then ENTER.)**  
+- Choose Yes when asked to use dbconfig-common.  
+- Set a MySQL application password for phpMyAdmin.  
+
+Enable the mbstring PHP extension:
+
+```bash
+sudo phpenmod mbstring  
+```
+
+Restart Apache:
+
+```bash
+sudo systemctl restart apache2  
+```
+
+---
+
+## Step 5 — Running a Laravel Project
+
+### Install Composer
+Laravel requires Composer, a dependency manager for PHP. Install it globally:
+
+```bash
+sudo apt install composer  
+```
+
+### Set Up a Laravel Project
+Navigate to the web root directory:
+
+```bash
+cd /var/www/html  
+```
+
+Create a new Laravel project:
+
+```bash 
+composer create-project --prefer-dist laravel/laravel project-name  
+```
+Set the correct permissions:
+
+```bash
+sudo chown -R www-data:www-data /var/www/html/project-name  
+sudo chmod -R 775 /var/www/html/project-name/storage /var/www/html/project-name/bootstrap/cache  
+```
+
+### Configure Apache for Laravel
+Create a new virtual host configuration:
+
+```bash
+sudo nano /etc/apache2/sites-available/laravel.conf  
+```
+
+Add the following content:
+
+```conf
+<VirtualHost *:80>  
+    ServerAdmin webmaster@localhost  
+    DocumentRoot /var/www/html/project-name/public  
+    <Directory /var/www/html/project-name/public>  
+        AllowOverride All  
+        Require all granted  
+    </Directory>  
+    ErrorLog ${APACHE_LOG_DIR}/error.log  
+    CustomLog ${APACHE_LOG_DIR}/access.log combined  
+</VirtualHost>  
+```
+
+Enable the site and rewrite module:
+
+```bash
+sudo a2ensite laravel  
+sudo a2enmod rewrite  
+sudo systemctl restart apache2  
+```
+
+Your Laravel project should now be accessible via the server's IP address or domain.
+
+---
+
+## Conclusion
+
+Your Ubuntu server is now fully set up for PHP development. With Apache serving web pages, PHP executing scripts, MariaDB handling databases, and phpMyAdmin providing a GUI for database management, you’re ready to deploy your PHP projects!
