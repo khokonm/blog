@@ -5,83 +5,88 @@ week: 03
 tags: ['javascript', 'react-native', 'expo', 'mobile-app']
 draft: false
 layout: PostBanner
-images: ['https://res.cloudinary.com/dnaysogky/image/upload/v1740220246/A_visually_engaging_digital_artwork_of_expo_to_apk_aibgjr.jpg']
+images:
+  [
+    'https://res.cloudinary.com/dnaysogky/image/upload/v1740220246/A_visually_engaging_digital_artwork_of_expo_to_apk_aibgjr.jpg',
+  ]
 summary: 'Learn how to export an APK from a React Native Expo project without ejecting. This step-by-step guide covers essential commands, troubleshooting, and configuring eas.json to generate an APK effortlessly.'
 ---
 
-I spent hours trying to export an APK from a React Native Expo project—without ejecting it. 
+I spent hours trying to export an APK from a React Native Expo project—without ejecting it.
 It took me nearly half a day to figure out, so I’m writing this guide to save you the trouble.
 
 Let’s dive straight into the commands you need
 
-## Steps to Build an APK from Expo  
+## Steps to Build an APK from Expo
 
-Alright, let's get straight to it. Follow these steps to build your APK without ejecting your Expo project.  
+Alright, let's get straight to it. Follow these steps to build your APK without ejecting your Expo project.
 
-### 1. Install Dependencies  
+### 1. Install Dependencies
 
-First things first, make sure you have all the necessary packages installed:  
-
-```bash
-npm install  
-npx expo install expo-dev-client  
-```
-
-### 2. Check for Issues (Optional)  
-
-If you want to make sure your project is in good shape before building, run:  
+First things first, make sure you have all the necessary packages installed:
 
 ```bash
-npx expo-doctor  
+npm install
+npx expo install expo-dev-client
 ```
 
-This will scan your project and let you know if there are any issues that might cause trouble during the build.  
+### 2. Check for Issues (Optional)
 
-### 3. Fix Package Compatibility Issues (If Needed)  
-
-If you run into any package version mismatches, you can fix them easily by running:  
-
-```bash 
-npx expo install --fix  
-```
-
-### 4. Build the Project  
-
-Now, if everything looks good, it's time to build the project. Run:  
+If you want to make sure your project is in good shape before building, run:
 
 ```bash
-eas build --profile development --platform android  
+npx expo-doctor
 ```
 
-Make sure you're logged into your Expo account before running this command. If you don’t have one, create it from the official [expo website](https://expo.dev/).  
+This will scan your project and let you know if there are any issues that might cause trouble during the build.
 
-By default, this will generate an `.aab` file instead of an `.apk` file. If you need an APK, there’s one more step.  
+### 3. Fix Package Compatibility Issues (If Needed)
 
-## Modifying `eas.json` to Get an APK  
+If you run into any package version mismatches, you can fix them easily by running:
 
-To get an APK instead of an AAB, you’ll need to modify your `eas.json` file. Here’s what it should look like:  
+```bash
+npx expo install --fix
+```
+
+### 4. Build the Project
+
+Now, if everything looks good, it's time to build the project. Run:
+
+```bash
+eas build --profile development --platform android
+```
+
+Make sure you're logged into your Expo account before running this command. If you don’t have one, create it from the official [expo website](https://expo.dev/).
+
+By default, this will generate an `.aab` file instead of an `.apk` file. If you need an APK, there’s one more step.
+
+## Modifying `eas.json` to Get an APK
+
+To get an APK instead of an AAB, you’ll need to modify your `eas.json` file. Here’s what it should look like:
 
 ```json
-{  
-  "build": {  
+{
+  "build": {
     "production": {
       "autoIncrement": true,
       "android": {
         "buildType": "apk"
       }
     }
-  }  
-}  
+  }
+}
 ```
 
-Once you've updated the `eas.json` file, run this command to generate the APK:  
+Once you've updated the `eas.json` file, run this command to generate the APK:
 
-eas build --profile production --platform android  
+```bash
+eas build --profile production --platform android
+```
 
-And that's it! Now you’ll have your APK file ready to install or share.  
+And that's it! Now you’ll have your APK file ready to install or share.
 
-## Wrapping Up  
+## Wrapping Up
 
-And that's it! You now have a working APK from your Expo project—without having to eject. Whether you're testing your app or distributing it outside the Play Store, this method keeps your workflow smooth and hassle-free.  
+And that's it! You now have a working APK from your Expo project—without having to eject. Whether you're testing your app or distributing it outside the Play Store, this method keeps your workflow smooth and hassle-free.
 
-If you found this guide helpful, share it with fellow developers who might be struggling with the same issue. Happy coding! 
+If you found this guide helpful, share it with fellow developers who might be struggling with the same issue. Happy coding!

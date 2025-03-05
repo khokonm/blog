@@ -1,0 +1,123 @@
+---
+title: "Fixed: TypeError: Cannot read properties of null (reading 'useReducer') - Next.js"
+date: '2025-03-05'
+week: 03
+tags: ['javascript', 'Next.js', 'useReducer']
+draft: false
+summary: "Troubleshooting Next.js issues on MacBook with M chip, including 'next: command not found' and 'TypeError: Cannot read properties of null (reading useReducer)'. Learn how to fix path resolution and React version mismatches."
+---
+
+So, I was facing this issue that says `TypeError: Cannot read properties of null (reading useReducer)` with **Next.js project with the App Router** for quite a long time.
+
+For a moment, I thought this problem is speicific to my device, and I will no longer be able to run nextjs projects.
+
+I was true to a certain point, which is, the problem is indeed specific to my device, but not becuase I am using a MacBook with M chip. Here's what went wrong and how I fixed it.
+
+## 🔍 **Identifying the Issues**
+
+At some point, I had **globally installed Next.js** while working on a **Page Router-based project**, and it ran without any issues. However, when I switched to an **App Router-based project**, things started breaking and I was unable to run any nextjs projects.
+
+What made it harder to find the issue is, running `next dev` or `npm run dev` **didn't throw any errors initially**
+—the project seemed to start as expected. But when I opened it in the browser, I was greeted with:
+`TypeError: Cannot read properties of null (reading 'useReducer')`
+
+At first, it was frustrating because every Google search led to generic solutions for the `useReducer` error.
+But my issue went deeper—it was a conflict between the **globally installed Next.js** and the **locally installed version in the project**.
+
+So, let’s break down the exact steps I took to diagnose and fix this.
+
+## **⚠️ 1. Global Next.js Installation Not Working Properly**
+
+For some reason, I thought to remove any `next` installed in my device by running:
+
+```bash
+npm uninstall -g next
+```
+
+After that I removed the project's `node_modules` folder along with the `package-lock.json` by running:
+
+```bash
+rm -rf node_modules package-lock.json
+```
+
+## **🔎 2. Running Next.js After Cleanup → 'Command Not Found'**
+
+After cleaning up the project, I tried to run `next dev` or `npm run dev` again. But I was greeted with an error:
+
+```bash
+> nextjs@0.1.0 dev
+> next dev
+
+sh: next: command not found
+```
+
+I even tried running `npx run dev` but that also resulted the same error.
+
+## **🛠️ 3. Checking Next.js Installation Inside the Project**
+
+First, I started by checking the version of `next` installed in the project by running:
+
+```bash
+npm list next
+```
+
+and I got the following output:
+
+```bash
+nextjs@0.1.0 /Users/username/project_path
+└── next@13.5.1
+```
+
+Now that I know Next,js was installed locally, I checked if the binary file existed by running
+
+```bash
+ls -l node_modules/.bin/next
+```
+
+Which returned:
+
+```bash
+lrwxr-xr-x@ 1 username  staff  21 Mar  5 17:02 node_modules/.bin/next -> ../next/dist/bin/next
+```
+
+Which means, the **Next.js binary file** was present, but for some reason, it still wasn't running!
+
+## **✅ 4. Manually Running Next.js Worked**
+
+So, I decided to manually run the Next.js binary file by running:
+
+```bash
+node node_modules/next/dist/bin/next dev
+```
+
+This **successfully started the project!** Meaning the issue wasn’t with Next.js itself but with how my terminal was resolving it.
+
+## **🔧 5. Fixing the Path Issue (Temporary & Permanent Solutions)**
+
+### 🛠️ Temporary Fix
+
+To immediately fix the issue for my current terminal session, I updated the path manually:
+
+```bash
+export PATH="./node_modules/.bin:$PATH"
+```
+
+After running this, `npm run dev` worked fine.
+
+### 🔒 Making It Permanent
+
+To ensure I wouldn’t need to run this command every time, I added it to my `.zshrc`:
+
+```bash
+echo 'export PATH="./node_modules/.bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Now, the issue was permanently resolved along with the issue that I was facing with the `useReducer` error.
+
+## **📚 Additional Resources**
+
+If you're still facing the `useReducer` error, make sure you're using the correct version of React. Here are some helpful resources to help you fix that specific issue:
+
+- [Next.js Github Issues](https://github.com/vercel/next.js/discussions/61630)
+- [React Official Docs – useReducer](https://react.dev/reference/react/useReducer)
