@@ -38,6 +38,3 @@ jobs:
           local-dir: ./out/
           server-dir: /
           dangerous-clean-slate: true
-          protocol: ftps
-          port: 990
-          log-level: verbose
