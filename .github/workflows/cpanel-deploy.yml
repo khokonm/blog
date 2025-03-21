@@ -38,5 +38,6 @@ jobs:
           local-dir: ./out/
           server-dir: /
           dangerous-clean-slate: true
-          protocol: sftp
-          port: 22
+          protocol: ftps
+          port: 21
+          log-level: verbose
