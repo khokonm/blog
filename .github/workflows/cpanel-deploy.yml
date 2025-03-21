@@ -38,4 +38,5 @@ jobs:
           local-dir: ./out/
           server-dir: /
           dangerous-clean-slate: true
-          passive: true
+          protocol: sftp
+          port: 22
