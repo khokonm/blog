@@ -1,7 +1,13 @@
 {
+  "weekup": 3,
+  "digital-detox": 2,
+  "productivity": 2,
+  "mindfulness": 2,
+  "experiment": 2,
+  "ai": 2,
   "javascript": 2,
   "nextjs": 2,
-  "mobile-app": 2,
+  "usereducer": 1,
   "ubuntu": 1,
   "apache": 1,
   "php": 1,
@@ -15,11 +21,11 @@
   "cpanel": 1,
   "react-native": 1,
   "expo": 1,
+  "mobile-app": 1,
   "health": 2,
   "dnr": 2,
   "ethical-choices": 2,
   "introduction": 1,
   "learning": 1,
-  "development": 1,
-  "weekup": 1
+  "development": 1
 }

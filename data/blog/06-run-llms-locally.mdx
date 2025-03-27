@@ -1,0 +1,93 @@
+---
+title: 'Run LLMs Locally: Build Your Own AI Chat Assistant'
+date: '2025-03-27'
+week: 06
+tags:
+  ['LLM', 'AI', 'Local AI', 'Self-Hosted AI', 'Ollama', 'CodeLlama', 'Chatbot', 'Machine Learning']
+draft: false
+summary: 'A step-by-step guide to running open-source AI models like CodeLlama locally using Ollama. Learn how to set up a local chatbot, connect it to a frontend, and make it remember chat history.'
+---
+
+This week, I explored how to **run an AI chatbot locally** using open-source models like **CodeLlama** with [Ollama](https://ollama.com). The goal was to create an AI assistant that works **entirely offline**, just like ChatGPT, but without relying on any cloud-based services.
+
+If you’ve never worked with LLMs before, don’t worry—this guide will take you from **zero to a working local AI chat assistant** step by step.
+
+## **Step 1: Install Ollama**
+
+Ollama makes it incredibly easy to run **open-source AI models** on your own machine. If you haven’t installed it yet, just run:
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+This will install Ollama and its dependencies.
+
+Once installed, you can **pull any model** you want. For example, to download **CodeLlama**:
+
+```bash
+ollama pull codellama
+```
+
+Now you have an **AI model running locally!** 🎉
+
+## **Step 2: Run Your First AI Query**
+
+To test it, simply run:
+
+```bash
+ollama run codellama "What is the capital of France?"
+```
+
+Your local AI will respond just like an online chatbot!
+
+## **Step 3: Expose Ollama's API**
+
+Ollama provides an **HTTP API** at `localhost:11434` to interact with models. You can send requests like this:
+
+```bash
+curl -X POST http://localhost:11434/api/generate \
+-H "Content-Type: application/json" \
+-d '{ "model": "codellama", "prompt": "What is 2 + 2?", "stream": false }'
+```
+
+This returns a JSON response with the AI’s answer.
+
+## **Step 4: Build a Chat UI**
+
+Instead of using the command line, I built a **React-based chat interface** that connects to Ollama’s API and streams responses in real time. You can find the code here:
+
+🔗 [GitHub Repo](https://github.com/khokonm/ollama-gui)
+
+### **How It Works**
+
+✅ **Sends messages** to Ollama’s local API (`localhost:11434`).  
+✅ **Streams responses** in real time, so text appears word by word.  
+✅ **Keeps chat history** so the AI remembers context.
+
+## **Step 5: Adding Context History**
+
+By default, each request is independent, meaning the AI **forgets previous messages**. To fix this, we send the full conversation history as the prompt.
+
+1️⃣ **Store messages** in an array  
+2️⃣ **Send the entire chat history** as the prompt  
+3️⃣ **Limit message history** to avoid long input sizes
+
+Here’s an example of a JSON request that includes previous messages:
+
+```javascript
+{
+  "model": "codellama",
+  "prompt": "User: Hello!\\nAI: Hi there!\\nUser: How are you?\\nAI:",
+  "stream": true
+}
+```
+
+The AI now **remembers context** and responds accordingly.
+
+## **Final Thoughts**
+
+Running **LLMs locally** is easier than ever. You now have a **fully offline AI assistant** that can chat like ChatGPT, but without sending data to external servers. 🚀
+
+Next step? **Adding persistent memory** by storing chat history in a database!
+
+Let me know if you try this! Would love to hear how it works for you. 🙌
