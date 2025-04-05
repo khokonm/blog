@@ -1,0 +1,186 @@
+---
+title: 'Setting Up Virtual Hosts for Different Domains on the Same Ubuntu Server'
+date: 2025-04-06
+week: 08
+tags:
+  [
+    'ubuntu',
+    'apache',
+    'nginx',
+    'virtual-host',
+    'linux-server',
+    'web-hosting',
+    'sysadmin',
+    'devops',
+    'tutorial',
+  ]
+summary: 'Learn how to host multiple websites on a single Ubuntu server using Apache or Nginx. This guide walks you through configuring virtual hosts step-by-step for both web servers.'
+---
+
+Hosting multiple websites on a single Ubuntu server is a common need. Here's how to set up virtual hosts for different domains using Apache and Nginx.
+
+## Apache Virtual Host Setup
+
+### 1. Create Directory Structure
+
+```bash
+sudo mkdir -p /var/www/example1.com/public_html
+sudo mkdir -p /var/www/example2.com/public_html
+
+sudo chown -R $USER:$USER /var/www/example1.com/public_html
+sudo chown -R $USER:$USER /var/www/example2.com/public_html
+```
+
+### 2. Add Sample HTML Files
+
+```bash
+echo "<h1>Welcome to example1.com</h1>" > /var/www/example1.com/public_html/index.html
+echo "<h1>Welcome to example2.com</h1>" > /var/www/example2.com/public_html/index.html
+```
+
+### 3. Create Virtual Host Files
+
+Create the first virtual host file:
+
+```bash
+    sudo nano /etc/apache2/sites-available/example1.com.conf
+```
+
+Paste:
+
+```bash
+<VirtualHost *:80>
+    ServerAdmin admin@example1.com
+    ServerName example1.com
+    ServerAlias www.example1.com
+    DocumentRoot /var/www/example1.com/public_html
+    ErrorLog ${APACHE_LOG_DIR}/example1_error.log
+    CustomLog ${APACHE_LOG_DIR}/example1_access.log combined
+</VirtualHost>
+```
+
+Now create the second one:
+
+```bash
+sudo nano /etc/apache2/sites-available/example2.com.conf
+```
+
+Paste:
+
+```bash
+<VirtualHost *:80>
+    ServerAdmin admin@example2.com
+    ServerName example2.com
+    ServerAlias www.example2.com
+    DocumentRoot /var/www/example2.com/public_html
+    ErrorLog ${APACHE_LOG_DIR}/example2_error.log
+    CustomLog ${APACHE_LOG_DIR}/example2_access.log combined
+</VirtualHost>
+```
+
+### 4. Enable Sites and Restart Apache
+
+```bash
+sudo a2ensite example1.com.conf
+sudo a2ensite example2.com.conf
+sudo systemctl reload apache2
+```
+
+Enable rewrite module if needed:
+
+```bash
+sudo a2enmod rewrite
+sudo systemctl restart apache2
+```
+
+---
+
+## Nginx Virtual Host Setup
+
+### 1. Create Directory Structure
+
+```bash
+sudo mkdir -p /var/www/example1.com/html
+sudo mkdir -p /var/www/example2.com/html
+sudo chown -R $USER:$USER /var/www/example1.com/html
+sudo chown -R $USER:$USER /var/www/example2.com/html
+```
+
+### 2. Add Sample HTML Files
+
+```bash
+echo "<h1>Welcome to example1.com</h1>" > /var/www/example1.com/html/index.html
+echo "<h1>Welcome to example2.com</h1>" > /var/www/example2.com/html/index.html
+```
+
+### 3. Create Nginx Server Block Files
+
+First:
+
+```bash
+sudo nano /etc/nginx/sites-available/example1.com
+```
+
+Paste:
+
+```bash
+server {
+    listen 80;
+    server_name example1.com www.example1.com;
+
+    root /var/www/example1.com/html;
+    index index.html;
+
+    access_log /var/log/nginx/example1_access.log;
+    error_log /var/log/nginx/example1_error.log;
+}
+```
+
+Then:
+
+```bash
+sudo nano /etc/nginx/sites-available/example2.com
+```
+
+Paste:
+
+```bash
+server {
+    listen 80;
+    server_name example2.com www.example2.com;
+
+    root /var/www/example2.com/html;
+    index index.html;
+
+    access_log /var/log/nginx/example2_access.log;
+    error_log /var/log/nginx/example2_error.log;
+}
+```
+
+### 4. Enable Sites and Restart Nginx
+
+```bash
+sudo ln -s /etc/nginx/sites-available/example1.com /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/example2.com /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+---
+
+## Local Testing
+
+To test locally, add entries to your hosts file:
+
+```bash
+sudo nano /etc/hosts
+```
+
+Add:
+
+```bash
+127.0.0.1 example1.com
+127.0.0.1 example2.com
+```
+
+Save and access the domains via your browser.
