@@ -1,0 +1,115 @@
+---
+title: 'Installing SSL with Certbot on Apache and Nginx'
+week: 08
+date: 2025-04-06
+tags: ['ssl', 'certbot', 'apache', 'nginx', 'lets-encrypt', 'https', 'security']
+summary: 'Learn how to install a free SSL certificate using Certbot for both Apache and Nginx web servers. Step-by-step guide included.'
+---
+
+Securing your website with HTTPS is no longer optional. It’s a fundamental requirement for trust, SEO, and modern web features. Luckily, Let’s Encrypt makes it free, and Certbot makes it easy. In this post, we’ll walk through installing an SSL certificate using Certbot on both Apache and Nginx servers.
+
+Let’s start by figuring out what server your system is running.
+
+---
+
+## Step 1: Check Your Web Server Type
+
+You’ll need to know whether your server uses Apache or Nginx. Run this command:
+
+**To check running web server:**
+
+```bash
+sudo ss -tulwn | grep -E '80|443'
+```
+
+**Or check installed packages:**
+
+```bash
+apache2 -v
+```
+
+If Apache is installed, you'll see version info. If not:
+
+```bash
+nginx -v
+```
+
+Still unsure? Try this:
+
+```bash
+ps aux | grep -E 'apache2|nginx'
+```
+
+Now that you’ve figured it out, let’s install SSL using Certbot.
+
+---
+
+## Step 2: Install Certbot
+
+Certbot is a client that simplifies the process of obtaining and installing SSL certificates. It’s available for both Apache and Nginx.
+
+Install Certbot and the plugin matching your web server.
+
+**For Debian/Ubuntu:**
+
+```bash
+sudo apt update
+sudo apt install certbot python3-certbot-apache   # for Apache
+sudo apt install certbot python3-certbot-nginx    # for Nginx
+```
+
+**For CentOS/RHEL:**
+
+```bash
+sudo dnf install epel-release
+sudo dnf install certbot python3-certbot-apache   # for Apache
+sudo dnf install certbot python3-certbot-nginx    # for Nginx
+```
+
+---
+
+## Step 3: Get SSL Certificate with Certbot
+
+Now that Certbot is installed, you can use it to get an SSL certificate.
+
+**For Apache:**
+
+```bash
+sudo certbot --apache
+```
+
+Certbot will automatically detect your virtual hosts and ask you which domains to enable HTTPS for. Follow the prompts.
+
+---
+
+**For Nginx:**
+
+```bash
+sudo certbot --nginx
+```
+
+Follow the prompts to complete the process. Certbot will ask you for your email address and agree to the terms of service.Same as Apache, Certbot will configure your server blocks automatically.
+
+---
+
+## Step 4: Auto-Renewal
+
+Let’s Encrypt certificates are valid for 90 days. Certbot sets up a systemd timer or cron job by default. You can test the renewal process:
+
+```bash
+sudo certbot renew --dry-run
+```
+
+If everything looks good, you can run the renewal process without the dry-run flag:
+
+```bash
+sudo certbot renew
+```
+
+---
+
+## Done 🎉
+
+Whether you're on Apache or Nginx, your site should now be secured with a valid SSL certificate. Visit your domain with `https://` and verify the padlock.
+
+If you’re using a different web server (like Caddy or Lighttpd), or need to manually configure Certbot, you can explore more options at [Certbot’s documentation](https://certbot.eff.org).
