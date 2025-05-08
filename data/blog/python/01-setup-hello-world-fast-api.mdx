@@ -1,0 +1,137 @@
+---
+title: 'Setting Up a Hello World Python Project with JWT Middleware Using FastAPI'
+date: '2025-05-08'
+week: 10
+tags: ['fastapi', 'python', 'jwt', 'authentication', 'backend', 'web development', 'api']
+draft: false
+summary: 'A step-by-step guide to create a basic FastAPI project with JWT authentication, from setting up a virtual environment to serving your app locally.'
+---
+
+If you're just starting with FastAPI and want a clean, simple project that includes user authentication via JWT (JSON Web Tokens), this post walks you through setting it up step-by-step—from creating your virtual environment to serving your app locally.
+
+---
+
+## 🧱 Step 1: Initialize the Project Structure
+
+First, create a new folder for your project:
+
+```bash
+mkdir fastapi-hello-jwt
+cd fastapi-hello-jwt
+```
+
+Create some basic structure:
+
+```bash
+touch main.py
+mkdir app
+touch app/__init__.py app/auth.py
+```
+
+## 🐍 Step 2: Set Up Virtual Environment
+
+Let’s isolate dependencies using `venv`:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+```
+
+Install FastAPI and Uvicorn:
+
+```bash
+pip install fastapi uvicorn python-jose[cryptography] passlib[bcrypt]
+```
+
+Freeze the requirements:
+
+```bash
+pip freeze > requirements.txt
+```
+
+## 👋 Step 3: Build the Hello World Endpoint
+
+Edit `main.py`:
+
+```python
+from fastapi import FastAPI
+from app.auth import get_current_user
+
+app = FastAPI()
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
+
+@app.get("/protected")
+def protected_route(user: str = Depends(get_current_user)):
+    return {"message": f"Hello, {user}!"}
+```
+
+## 🔐 Step 4: Create Basic JWT Middleware (in `app/auth.py`)
+
+```python
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
+
+SECRET_KEY = "your-secret-key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return username
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+```
+
+## 🔁 Step 5: Add a Token Route for Testing
+
+In `main.py`, add this route:
+
+```python
+from fastapi.security import OAuth2PasswordRequestForm
+from app.auth import create_access_token
+
+@app.post("/token")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    if form_data.username == "admin" and form_data.password == "admin":
+        token = create_access_token({"sub": form_data.username})
+        return {"access_token": token, "token_type": "bearer"}
+    raise HTTPException(status_code=401, detail="Invalid credentials")
+```
+
+## ▶️ Step 6: Run and Serve the App
+
+With everything set, you can run your app using Uvicorn:
+
+```bash
+uvicorn main:app --reload
+```
+
+Now:
+
+- `GET /` returns a public "Hello, World!"
+- `POST /token` with body `username=admin&password=admin` gives you a JWT
+- `GET /protected` requires a Bearer token
+
+---
+
+## ✅ Final Notes
+
+- Keep your `SECRET_KEY` safe and use environment variables in real apps.
+- This is a starting point—you should add user management, proper hashing, and token refresh logic for production.
