@@ -115,6 +115,31 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
     raise HTTPException(status_code=401, detail="Invalid credentials")
 ```
 
+And your final `main.py` will look like this:
+
+```python
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+from app.auth import get_current_user, create_access_token
+
+app = FastAPI()
+
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
+
+@app.get("/protected")
+def protected_route(user: str = Depends(get_current_user)):
+    return {"message": f"Hello, {user}!"}
+
+@app.post("/token")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    if form_data.username == "admin" and form_data.password == "admin":
+        token = create_access_token({"sub": form_data.username})
+        return {"access_token": token, "token_type": "bearer"}
+    raise HTTPException(status_code=401, detail="Invalid credentials")
+```
+
 ## ▶️ Step 6: Run and Serve the App
 
 With everything set, you can run your app using Uvicorn:
