@@ -26,7 +26,7 @@ jobs:
         env:
           EXPORT: 1
           UNOPTIMIZED: 1
-          BASE_PATH: /weekup
+          BASE_PATH: /blog
         run: yarn build
 
       - name: Deploy to cPanel

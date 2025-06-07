@@ -1,73 +1,55 @@
-# WeekUp - Weekly Learning Journal
+# Khokon's Blog - Tech Insights & Learning
 
-[![Deploy to cPanel](https://github.com/khokonm/weekup/actions/workflows/cpanel-deploy.yml/badge.svg)](https://github.com/khokonm/weekup/actions/workflows/cpanel-deploy.yml)
+[![Deploy to cPanel](https://github.com/khokonm/blog/actions/workflows/cpanel-deploy.yml/badge.svg)](https://github.com/khokonm/blog/actions/workflows/cpanel-deploy.yml)
 
-WeekUp is a collaborative learning journal where developers share their weekly insights, discoveries, and growth in technology and software development. Built with Next.js and Tailwind CSS, this platform encourages continuous learning and knowledge sharing within the developer community.
+A personal blog where I document my journey in technology and software development. Built with Next.js and Tailwind CSS, this platform serves as a space for sharing insights, discoveries, and continuous learning in the tech world.
 
 ## Template Attribution
 
-This project is forked from [Tailwind Nextjs Starter Blog](https://github.com/timlrx/tailwind-nextjs-starter-blog) created by Timothy Lin. The template has been modified to match our specific use case while maintaining the core functionality and design principles of the original project.
+This project is built using [Tailwind Nextjs Starter Blog](https://github.com/timlrx/tailwind-nextjs-starter-blog) created by Timothy Lin. The template has been customized to match my personal blogging needs while maintaining the core functionality and design principles of the original project.
 
 ## Logo Attribution
 
 Logo source: [Notepad Note SVG Vector](https://www.svgrepo.com/svg/193785/notepad-note)
 
-## Contributing Your Learning Journey
+## About This Blog
 
-We welcome contributions from all developers who want to share their learning experiences! Here's how you can contribute:
+This blog focuses on:
 
-### Adding Your Weekly Posts
+- Backend development experiences and insights
+- Technical tutorials and problem-solving approaches
+- Software development best practices
+- Professional growth and learning
+- Technology trends and industry observations
 
-1. Fork the repository
-2. Create your author profile:
-   - Add a new file in `data/authors/your-username.mdx`
-   - Follow the structure in `data/authors/default.mdx`
-   - Include your bio and social links
+### Content Structure
 
-3. Create your weekly post:
-   - Add a new MDX file in `data/blog/`
-   - Use the following frontmatter template:
-   ```md
-   ---
-   title: 'Your Post Title'
-   date: 'YYYY-MM-DD'
-   week: XX # Week number
-   tags: ['tag1', 'tag2']
-   draft: false
-   summary: 'A brief summary of your post'
-   author: 'your-username' # Must match your author profile filename
-   ---
-   ```
+Posts are organized in `data/blog/` with the following frontmatter structure:
 
-4. Write your content using MDX
-   - Share what you learned this week
-   - Include code snippets, examples, and explanations
-   - Add relevant images in `public/static/images/`
-   - Reference external resources
+```md
+---
+title: 'Your Post Title'
+date: 'YYYY-MM-DD'
+tags: ['tag1', 'tag2']
+draft: false
+summary: 'A brief summary of your post'
+---
+```
 
 ### Content Guidelines
 
-- Focus on learning experiences and insights
-- Include practical examples and real-world applications
-- Properly format code snippets and technical content
-- Credit sources and inspirations
-- Keep content professional and constructive
-
-### Submission Process
-
-1. Ensure your content follows the guidelines
-2. Test locally using `npm run dev`
-3. Create a Pull Request with:
-   - Clear title and description
-   - Link to preview deployment (if available)
-   - Any additional context
+- Focus on practical insights and real-world applications
+- Include code snippets, examples, and explanations
+- Add relevant images in `public/static/images/`
+- Reference external resources appropriately
+- Maintain professional and constructive tone
 
 ## Development Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/khokonm/weekup.git
-cd weekup
+git clone https://github.com/khokonm/blog.git
+cd blog
 
 # Install dependencies
 npm install
@@ -92,19 +74,20 @@ npm run dev
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Support
+## Connect
 
-If you find WeekUp helpful, please consider:
-- Starring the repository
-- Sharing your own learning journey
-- Providing feedback and suggestions
-- Contributing improvements
+If you find this blog helpful:
+
+- Star the repository
+- Share your thoughts and feedback
+- Connect with me on [LinkedIn](https://www.linkedin.com/in/khokon-m/)
+- Follow me on [GitHub](https://github.com/khokonm)
 
 ## Questions?
 
-If you have questions about contributing or need help getting started:
-- Open an issue
-- Check existing FAQs in the `/faq` directory
-- Contact the maintainers
+If you have questions or suggestions:
 
-Let's learn and grow together! 🚀
+- Open an issue
+- Contact me via email: hello@khokon.dev
+
+Thanks for reading! 🚀

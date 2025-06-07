@@ -1,18 +1,19 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'WeekUp - Weekly Learning Journal',
+  title: "Khokon's Blog - Tech Insights & Learning",
   author: 'Khokon M.',
-  headerTitle: 'WeekUp',
-  description: 'A weekly journal documenting my learning journey in tech, development, and personal growth',
+  headerTitle: "Khokon's Blog",
+  description:
+    'A personal blog documenting my journey in tech, development, and continuous learning',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://khokon.dev/weekup',
-  siteRepo: 'https://github.com/khokonm/weekup',
-  siteLogo: `${process.env.BASE_PATH || ''}/static/images/weekup.png`,
+  siteUrl: 'https://khokon.dev/blog',
+  siteRepo: 'https://github.com/khokonm/blog',
+  siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'hello@khokon.dev',
-  github: 'https://github.com/khokonm/weekup',
+  github: 'https://github.com/khokonm/blog',
   x: 'https://x.com/Md_Khokon_Mia',
   // twitter: 'https://twitter.com/Twitter',
   // facebook: 'https://facebook.com',
@@ -64,7 +65,7 @@ const siteMetadata = {
       // Visit the link below, and follow the steps in the 'configuration' section
       // https://giscus.app/
       // repo: process.env.NEXT_PUBLIC_GISCUS_REPO,
-      repo: 'khokonm/weekup',
+      repo: 'khokonm/blog',
       // repositoryId: process.env.NEXT_PUBLIC_GISCUS_REPOSITORY_ID,
       repositoryId: 'R_kgDON17Uvg',
       // category: process.env.NEXT_PUBLIC_GISCUS_CATEGORY,
