@@ -28,12 +28,16 @@ const MobileNav = () => {
 
   return (
     <>
-      <button aria-label="Toggle Menu" onClick={onToggleNav} className="sm:hidden">
+      <button
+        aria-label="Toggle Menu"
+        onClick={onToggleNav}
+        className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 sm:hidden"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className="h-8 w-8 text-gray-900 hover:text-primary-500 dark:text-gray-100 dark:hover:text-primary-400"
+          className="h-6 w-6 text-gray-700 dark:text-gray-300"
         >
           <path
             fillRule="evenodd"
@@ -54,49 +58,80 @@ const MobileNav = () => {
             leaveTo="opacity-0"
             unmount={false}
           >
-            <div className="fixed inset-0 z-60 bg-black/25" />
+            <div className="fixed inset-0 z-60 bg-black/50 backdrop-blur-sm" />
           </Transition.Child>
 
           <Transition.Child
             as={Fragment}
             enter="transition ease-in-out duration-300 transform"
             enterFrom="translate-x-full opacity-0"
-            enterTo="translate-x-0 opacity-95"
+            enterTo="translate-x-0 opacity-100"
             leave="transition ease-in duration-200 transform"
-            leaveFrom="translate-x-0 opacity-95"
+            leaveFrom="translate-x-0 opacity-100"
             leaveTo="translate-x-full opacity-0"
             unmount={false}
           >
-            <Dialog.Panel className="fixed left-0 top-0 z-70 h-full w-full bg-white opacity-95 duration-300 dark:bg-gray-950 dark:opacity-[0.98]">
-              <nav
-                ref={navRef}
-                className="mt-8 flex h-full basis-0 flex-col items-start overflow-y-auto pl-12 pt-2 text-left"
-              >
-                {headerNavLinks.map((link) => (
-                  <Link
-                    key={link.title}
-                    href={link.href}
-                    className="mb-4 py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 outline outline-0 hover:text-primary-500 dark:text-gray-100 dark:hover:text-primary-400"
+            <Dialog.Panel className="fixed right-0 top-0 z-70 h-full w-80 bg-white/95 shadow-2xl backdrop-blur-md dark:bg-gray-900/95">
+              <div className="flex h-full flex-col">
+                {/* Header */}
+                <div className="flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-700">
+                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    Navigation
+                  </h2>
+                  <button
+                    className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                    aria-label="Close Menu"
                     onClick={onToggleNav}
                   >
-                    {link.title}
-                  </Link>
-                ))}
-              </nav>
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
 
-              <button
-                className="fixed right-4 top-7 z-80 h-16 w-16 p-4 text-gray-900 hover:text-primary-500 dark:text-gray-100 dark:hover:text-primary-400"
-                aria-label="Toggle Menu"
-                onClick={onToggleNav}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
+                {/* Navigation Links */}
+                <nav ref={navRef} className="flex-1 overflow-y-auto p-6">
+                  <ul className="space-y-2">
+                    {headerNavLinks.map((link, index) => (
+                      <li key={link.title}>
+                        <Link
+                          href={link.href}
+                          className="group flex items-center rounded-lg px-4 py-3 text-base font-medium text-gray-700 transition-all hover:bg-primary-50 hover:text-primary-700 dark:text-gray-300 dark:hover:bg-primary-900/20 dark:hover:text-primary-300"
+                          onClick={onToggleNav}
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <span className="animate-slide-up">{link.title}</span>
+                          <svg
+                            className="ml-auto h-4 w-4 opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+
+                {/* Footer */}
+                <div className="border-t border-gray-200 p-6 dark:border-gray-700">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Explore, learn, and grow together
+                  </p>
+                </div>
+              </div>
             </Dialog.Panel>
           </Transition.Child>
         </Dialog>
