@@ -1,0 +1,187 @@
+---
+title: Headless Server Mastery: Enabling `.local` Domains and Reverse Proxying with Caddy
+date: 2025-11-23
+week: 10
+tags: ['ubuntu', 'server', 'caddy', 'reverse-proxy', 'local-domains']
+summary: This guide walks you through setting up persistent, automatic `.local` domain resolution using **Avahi (mDNS)** on Ubuntu, and then configuring the powerful **Caddy** web server to act as a **reverse proxy**, allowing you to access multiple local applications (like Cockpit) without typing a port number.
+---
+
+This guide walks you through setting up persistent, automatic `.local` domain resolution using **Avahi (mDNS)** on Ubuntu, and then configuring the powerful **Caddy** web server to act as a **reverse proxy**, allowing you to access multiple local applications (like Cockpit) without typing a port number.
+
+---
+
+## Prerequisites
+
+- A headless Ubuntu server accessible via SSH.
+- The `cockpit` dashboard is already installed (or any other application you want to proxy).
+- You have **confirmed your UFW firewall is disabled** (`sudo ufw status` should show `inactive`).
+
+---
+
+## Phase 1: Enabling Persistent `.local` Aliases (Avahi)
+
+By default, Ubuntu uses **Avahi** to broadcast its hostname as `hostname.local`. To enable custom aliases like `cockpit.local` and `app2.local`, we'll create a reusable systemd service.
+
+### 1. Install Avahi Utilities
+
+You need the utilities package to publish custom hostnames.
+
+```bash
+sudo apt update
+sudo apt install avahi-utils -y
+```
+
+### 2. Create the Alias Service Template
+
+We'll create a systemd template that allows us to easily create and enable new `.local` aliases by simply referencing the application name (e.g., `avahi-alias@cockpit`).
+
+```bash
+sudo nano /etc/systemd/system/avahi-alias@.service
+```
+
+Paste the following content:
+
+```Ini
+
+[Unit]
+
+Description=Publish %I.local as alias for %H.local via mDNS
+
+After=network.target avahi-daemon.service
+
+[Service]
+
+Type=simple
+
+# Resolves the main hostname's IP and publishes the alias pointing to it
+
+ExecStart=/bin/bash -c "/usr/bin/avahi-publish -a -R %I.local $(avahi-resolve -4 -n %H.local | cut -f 2)"
+
+Restart=always
+
+RestartSec=30
+
+[Install]
+
+WantedBy=multi-user.target
+```
+
+_Save and exit._
+
+### 3. Enable Your Local Domains
+
+Use this command to enable and start aliases for your applications. Replace `cockpit` and `app2` with your desired application names.
+
+```bash
+# Enable cockpit.local pointing to the server IP
+sudo systemctl enable --now avahi-alias@cockpit
+
+# Enable app2.local (for a future app on port 8080)
+sudo systemctl enable --now avahi-alias@app2
+```
+
+## Phase 2: Set up the Reverse Proxy (Caddy)
+
+We will use **Caddy** to handle the following:
+
+1.  Listen on standard web ports **80/443**.
+2.  Automatically issue self-signed HTTPS certificates for your local domains.
+3.  Forward traffic from the domain name to the application's unique port (e.g., `cockpit.local` to `localhost:9090`).
+
+### 1. Install Caddy
+
+Caddy is easily installed via its official repository.
+
+```bash
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update
+sudo apt install caddy -y
+```
+
+### 2. Configure Cockpit for Proxy Access
+
+Because Cockpit forces HTTPS by default and uses WebSockets, we need to make two small tweaks to ensure it plays nicely with Caddy.
+
+```bash
+sudo nano /etc/cockpit/cockpit.conf
+```
+
+Paste the following configuration:
+
+```ini
+[WebService]
+# List all local domains that are allowed to proxy to Cockpit
+Origins = https://cockpit.local http://127.0.0.1:9090
+# Allows proxy to talk to Cockpit on HTTP for cleaner local routing
+AllowUnencrypted = true
+# Crucial for WebSockets when using a proxy
+ProtocolHeader = X-Forwarded-Proto
+```
+
+_Save and exit, then restart Cockpit:_
+
+```bash
+sudo systemctl restart cockpit.socket
+```
+
+### 3. Edit the Caddyfile
+
+The `Caddyfile` is Caddy's configuration file. We will add a separate block for each domain.
+
+1.  **Edit the file:**
+
+```bash
+sudo nano /etc/caddy/Caddyfile
+```
+
+2. **Paste the configuration:** This setup uses the most reliable method for proxying Cockpit and shows how to add a second application.
+
+```bash
+# Configuration for Cockpit (Target Port 9090)
+cockpit.local {
+    # Proxy to Cockpit's HTTPS port (127.0.0.1:9090)
+    reverse_proxy https://127.0.0.1:9090 {
+        # Required to bypass Cockpit's self-signed certificate, making the local connection secure
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+}
+
+# Configuration for App 2 (Target Port 8080)
+app2.local {
+    # Proxy to a standard HTTP app running on 8080. Caddy handles the HTTPS layer.
+    reverse_proxy 127.0.0.1:8080
+}
+```
+
+### 4. Apply the Changes
+
+Save the Caddyfile and reload the service. Caddy will automatically test the configuration before applying it.
+
+```bash
+sudo systemctl reload caddy
+```
+
+## Phase 3: Access and Troubleshooting
+
+### Accessing Your Apps
+
+Open the browser on your client device and navigate to your new domains:
+
+- **Cockpit:** `https://cockpit.local`
+- **App 2:** `https://app2.local`
+
+You will need to bypass a **self-signed certificate warning** for each domain the first time, as Caddy generates these for local use.
+
+### Troubleshooting: The mDNS Barrier
+
+If you still get "took too long to respond" errors on your client devices, the **mDNS name resolution is failing** (typically on Android or due to router settings).
+
+**The Permanent Fix: Local DNS Server**
+
+To bypass all mDNS issues and guarantee every device on your network can resolve your domains, the next essential home lab step is setting up a centralized DNS server.
+
+Your new server is perfectly capable of running a containerized DNS server like **Pi-hole** or **AdGuard Home**, allowing you to set static A records for your local domains (e.g., `cockpit.local -> 192.168.0.xxx`). This is the final, most reliable solution for hosting multiple local apps.
